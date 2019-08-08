@@ -44,12 +44,12 @@ public class BuiltInInterfaces {
         consumer.andThen((s) -> s = s + "122");
         consumer.accept("334");
         Consumer<Person> greeter = (p) -> System.out.println("my name is" + p.getName());
-        greeter.accept(new Person(1,"张三"));
+        greeter.accept(new Person("张三",1));
 
         // Comparator
         Comparator<Person> comparator = (p1, p2) -> (p1.getName().compareTo(p2.getName()));
-        Person jack = new Person(1, "Jack");
-        Person rose = new Person(2, "Rose");
+        Person jack = new Person("Jack", 2);
+        Person rose = new Person("Rose", 3);
         int compare = comparator.compare(jack, rose);
         System.out.println(compare);
 

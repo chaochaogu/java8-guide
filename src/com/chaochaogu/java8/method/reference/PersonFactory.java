@@ -6,5 +6,5 @@ package com.chaochaogu.java8.method.reference;
  */
 public interface PersonFactory<P extends Person> {
 
-    P create(Integer id, String name);
+    P create(String name, Integer id);
 }

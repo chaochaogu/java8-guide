@@ -1,9 +1,14 @@
 package com.chaochaogu.java8.test.streams;
 
+import com.chaochaogu.java8.method.reference.Bar;
+import com.chaochaogu.java8.method.reference.Foo;
 import com.chaochaogu.java8.method.reference.Person;
 
 import java.util.Arrays;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,7 +41,7 @@ public class AdvancedStream {
                 .mapToObj(i -> "a" + i)
                 .forEach(System.out::println);
 
-        Stream.of(1.0, 2.0 ,3.0)
+        Stream.of(1.0, 2.0, 3.0)
                 .mapToInt(Double::intValue)
                 .mapToObj(i -> "b" + i)
                 .forEach(System.out::println);
@@ -137,6 +142,61 @@ public class AdvancedStream {
                         new Person("Pamela", 23),
                         new Person("David", 12));
         List<Person> filtered = persons.stream().filter(p -> p.getName().startsWith("p")).collect(Collectors.toList());
+        Map<Integer, List<Person>> personsByAge = persons.stream().collect(Collectors.groupingBy(p -> p.getAge()));
+        personsByAge.forEach((age, p) -> System.out.println("age: " + age + p));
+        persons.stream().collect(Collectors.averagingInt(p -> p.getAge()));
+        IntSummaryStatistics ageSummary = persons.stream().collect(Collectors.summarizingInt(p -> p.getAge()));
+        String phrase = persons
+                .stream()
+                .filter(p -> p.getAge() >= 18)
+                .map(p -> p.getName())
+                .collect(Collectors.joining(" and ", "In Germany ", " are of legal age."));
+        persons.stream().collect(Collectors.toMap(
+                p -> p.getAge(),
+                p -> p.getName(),
+                (name1, name2) -> (name1 + ";" + name2)
+        ));
+
+        // flatMap
+        IntStream.range(1, 4)
+                .mapToObj(i -> new Foo("Foo" + i))
+                .peek(f -> IntStream.range(1, 4)
+                        .mapToObj(i -> new Bar("Bar" + i + " <- " + f.name))
+                        .forEach(f.bars::add))
+                .flatMap(f -> f.bars.stream())
+                .forEach(b -> System.out.println(b.name));
+
+        Stream.of("one", "two", "three", "four")
+                .filter(e -> e.length() > 3)
+                .peek(e -> System.out.println("Filtered value: " + e))
+                .map(String::toUpperCase)
+                .peek(e -> System.out.println("Mapped value: " + e))
+                .collect(Collectors.toList());
+
+        // reduce
+        persons.stream()
+                .reduce((p1, p2) -> p1.getAge() > p2.getAge() ? p1 : p2)
+                .ifPresent(System.out::println);
+        Integer ageSum = persons
+                .stream()
+                .reduce(0, (sum, p) -> sum += p.getAge(), (sum1, sum2) -> sum1 + sum2);
+
+        // parallel Stream
+        ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+        Arrays.asList("a1", "a2", "b1", "c2", "c1")
+                .parallelStream()
+                .filter(s -> {
+                    System.out.format("filter: %s [%s]\n",
+                            s, Thread.currentThread().getName());
+                    return true;
+                })
+                .map(s -> {
+                    System.out.format("map: %s [%s]\n",
+                            s, Thread.currentThread().getName());
+                    return s.toUpperCase();
+                })
+                .forEach(s -> System.out.format("forEach: %s [%s]\n",
+                        s, Thread.currentThread().getName()));
 
 
     }

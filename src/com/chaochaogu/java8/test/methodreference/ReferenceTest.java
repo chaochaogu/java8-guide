@@ -18,7 +18,7 @@ public class ReferenceTest {
         String java = converter1.convert("JAVA");
         System.out.println(java);
         PersonFactory personFactory = Person::new;
-        Person person = personFactory.create(1, "张三");
+        Person person = personFactory.create("张三", 1);
 
 
 
