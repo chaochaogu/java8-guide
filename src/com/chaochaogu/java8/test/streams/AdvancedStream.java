@@ -156,6 +156,17 @@ public class AdvancedStream {
                 p -> p.getName(),
                 (name1, name2) -> (name1 + ";" + name2)
         ));
+        
+        // groupingBy and sum
+        Map<String, Integer> map = Stream.of(
+                new Person("周杰伦", 40),
+                new Person("林俊杰", 38),
+                new Person("林宥嘉", 32),
+                new Person("小明", 23),
+                new Person("小明", 24),
+                new Person("小红", 11),
+                new Person("小红", 12)
+        ).collect(Collectors.groupingBy(Person::getName, Collectors.summingInt(Person::getAge)));
 
         // flatMap
         IntStream.range(1, 4)
