@@ -21,6 +21,9 @@ import java.util.stream.Stream;
 public class AdvancedStream {
 
     public static void main(String[] args) {
+        
+        // boolean present = Stream.of("12", "23", "34").filter(str -> str.startsWith("2")).findAny().isPresent();
+        boolean match = Stream.of("12", "23", "34").anyMatch(str -> str.startsWith("4"));
 
         Stream.of("q1", "q2", "q3").findFirst().ifPresent(System.out::println);
 
